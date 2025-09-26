@@ -17,9 +17,24 @@ var wrkCmd = &cobra.Command{
 	Use:   "wrk",
 	Short: "交互式配置wrk性能测试参数",
 	Long: `交互式配置wrk性能测试工具参数，无需记忆复杂的选项。
+wrk是一个现代的HTTP基准测试工具，使用多线程设计和可扩展的事件通知系统，
+能够从单个多核CPU生成显著的负载，还支持可选的LuaJIT脚本进行自定义请求生成和处理。
+
+wrk工具的主要参数：
+  -c, --connections: 保持打开的HTTP连接总数，每个线程处理 N = connections/threads
+  -d, --duration:    测试持续时间，例如 2s, 2m, 2h
+  -t, --threads:     使用的线程总数
+  -s, --script:      LuaJIT脚本，用于高级测试场景
+  -H, --header:      添加到请求的HTTP头，例如 "User-Agent: wrk"
+      --latency:     打印详细的延迟统计信息
+      --timeout:     如果在指定时间内未收到响应，则记录超时
+
 例如：
   pfinal_cli_tools wrk  # 启动交互式配置界面
-  pfinal_cli_tools wrk -u http://example.com -t 2 -c 100 -d 10s  # 快速测试`,
+  pfinal_cli_tools wrk -u http://example.com -t 2 -c 100 -d 10s  # 快速测试
+
+基本wrk命令示例：
+  wrk -t12 -c400 -d30s http://127.0.0.1:8080/index.html`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 创建颜色打印器
 		red := color.New(color.FgRed).SprintFunc()
@@ -88,6 +103,30 @@ func buildWrkCommand(params map[string]string) string {
 	if duration, ok := params["duration"]; ok && duration != "" {
 		cmdBuilder.WriteString(" -d")
 		cmdBuilder.WriteString(duration)
+	}
+
+	// 添加Lua脚本
+	if script, ok := params["script"]; ok && script != "" {
+		cmdBuilder.WriteString(" -s")
+		cmdBuilder.WriteString(script)
+	}
+
+	// 添加HTTP头
+	if header, ok := params["header"]; ok && header != "" {
+		cmdBuilder.WriteString(" -H\"")
+		cmdBuilder.WriteString(header)
+		cmdBuilder.WriteString("\"")
+	}
+
+	// 添加延迟统计
+	if latency, ok := params["latency"]; ok && latency == "true" {
+		cmdBuilder.WriteString(" --latency")
+	}
+
+	// 添加超时时间
+	if timeout, ok := params["timeout"]; ok && timeout != "" {
+		cmdBuilder.WriteString(" --timeout")
+		cmdBuilder.WriteString(timeout)
 	}
 
 	// 添加URL

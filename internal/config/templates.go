@@ -132,6 +132,38 @@ func GetWrkTemplate() ToolTemplate {
 				Default:     "10s",
 				Required:    true,
 			},
+			{
+				Name:        "script",
+				Type:        ParamTypeString,
+				Label:       "Lua脚本",
+				Description: "LuaJIT脚本路径，用于自定义请求生成和处理",
+				Default:     "",
+				Required:    false,
+			},
+			{
+				Name:        "header",
+				Type:        ParamTypeString,
+				Label:       "HTTP头",
+				Description: "添加到请求的HTTP头，例如 'User-Agent: wrk'",
+				Default:     "",
+				Required:    false,
+			},
+			{
+				Name:        "latency",
+				Type:        ParamTypeBool,
+				Label:       "显示延迟统计",
+				Description: "是否打印详细的延迟统计信息",
+				Default:     "false",
+				Required:    false,
+			},
+			{
+				Name:        "timeout",
+				Type:        ParamTypeString,
+				Label:       "超时时间",
+				Description: "响应超时时间，例如 '1s'",
+				Default:     "",
+				Required:    false,
+			},
 		},
 	}
 }
